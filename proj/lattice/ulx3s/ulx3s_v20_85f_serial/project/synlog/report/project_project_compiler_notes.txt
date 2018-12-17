@@ -1,0 +1,16 @@
+@N|Running in 64-bit mode
+@N|Running in 64-bit mode
+@N: CD720 :"/mt/lattice/diamond/3.7_x64/synpbase/lib/vhd/std.vhd":123:18:123:21|Setting time resolution to ns
+@N:"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":18:7:18:19|Top entity is set to ulx3s_usbtest.
+@N: CD630 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":18:7:18:19|Synthesizing work.ulx3s_usbtest.behavioral.
+@N: CD630 :"/home/guest/src/fpga/fpga_spi_oled/oled.vhd":15:7:15:10|Synthesizing work.oled.rtl.
+@N: CD630 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/lattice/ulx3s/clocks/clk_25M_100M_7M5_12M_60M.vhd":12:7:12:30|Synthesizing work.clk_25m_100m_7m5_12m_60m.structure.
+@N: CD630 :"/mt/lattice/diamond/3.7_x64/cae_library/synthesis/vhdl/ecp5u.vhd":2081:10:2081:16|Synthesizing work.ehxplll.syn_black_box.
+@N: CD630 :"/mt/lattice/diamond/3.7_x64/cae_library/synthesis/vhdl/ecp5u.vhd":830:10:830:12|Synthesizing work.vlo.syn_black_box.
+@N: CD630 :"/mt/lattice/diamond/3.7_x64/cae_library/synthesis/vhdl/ecp5u.vhd":823:10:823:12|Synthesizing work.vhi.syn_black_box.
+@N: CL159 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":29:2:29:9|Input ftdi_txd is unused.
+@N: CL159 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":38:2:38:9|Input wifi_txd is unused.
+@N: CL159 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":49:2:49:3|Input sw is unused.
+@N: CL159 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":56:2:56:12|Input usb_fpga_dp is unused.
+@N|Running in 64-bit mode
+

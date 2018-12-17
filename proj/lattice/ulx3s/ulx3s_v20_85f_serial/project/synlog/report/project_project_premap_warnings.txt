@@ -1,0 +1,2 @@
+@W: FX474 |User-specified initial value defined for some sequential elements which can prevent optimum synthesis results from being achieved. 
+@W: MT529 :"/home/guest/src/fpga/fpga_spi_oled/oled.vhd":130:4:130:5|Found inferred clock clk_25M_100M_7M5_12M_60M|CLKOS_inferred_clock which controls 125 sequential elements including g_oled\.oled_inst.R_data_index[0]. This clock has no specified timing constraint which may prevent conversion of gated or generated clocks and may adversely impact design performance. 

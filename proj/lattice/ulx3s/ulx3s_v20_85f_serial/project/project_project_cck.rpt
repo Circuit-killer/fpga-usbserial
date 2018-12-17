@@ -1,0 +1,171 @@
+# Synopsys Constraint Checker, version maplat, Build 1368R, built Jan  8 2016
+# Copyright (C) 1994-2016 Synopsys, Inc. All rights reserved. This Synopsys software and all associated documentation are proprietary to Synopsys, Inc. and may only be used pursuant to the terms and conditions of a written license agreement with Synopsys, Inc. All other use, reproduction, modification, or distribution of the Synopsys software or the associated documentation is strictly prohibited.
+
+# Written on Mon Dec 17 22:26:02 2018
+
+
+##### DESIGN INFO #######################################################
+
+Top View:                "ulx3s_usbtest"
+Constraint File(s):      (none)
+
+
+
+
+##### SUMMARY ############################################################
+
+Found 0 issues in 0 out of 0 constraints
+
+
+##### DETAILS ############################################################
+
+
+
+Clock Relationships
+*******************
+
+Starting                                          Ending                                            |     rise to rise     |     fall to fall     |     rise to fall     |     fall to rise                     
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+System                                            System                                            |     1000.000         |     No paths         |     No paths         |     No paths                         
+clk_25M_100M_7M5_12M_60M|CLKOS_inferred_clock     clk_25M_100M_7M5_12M_60M|CLKOS_inferred_clock     |     2.730            |     No paths         |     No paths         |     No paths                         
+===============================================================================================================================================================================================================
+ Note: 'No paths' indicates there are no paths in the design for that pair of clock edges.
+       'Diff grp' indicates that paths exist but the starting clock and ending clock are in different clock groups.
+
+
+Unconstrained Start/End Points
+******************************
+
+p:btn[0]
+p:btn[1]
+p:btn[2]
+p:btn[3]
+p:btn[4]
+p:btn[5]
+p:btn[6]
+p:clk_25mhz
+p:ftdi_ndsr
+p:ftdi_ndtr
+p:ftdi_nrts
+p:ftdi_rxd
+p:ftdi_txd
+p:ftdi_txden
+p:gn[0]
+p:gn[1]
+p:gn[2]
+p:gn[3]
+p:gn[4]
+p:gn[5]
+p:gn[6]
+p:gn[7]
+p:gn[8]
+p:gn[9]
+p:gn[10]
+p:gn[11]
+p:gn[12]
+p:gn[13]
+p:gn[14]
+p:gn[15]
+p:gn[16]
+p:gn[17]
+p:gn[18]
+p:gn[19]
+p:gn[20]
+p:gn[21]
+p:gn[22]
+p:gn[23]
+p:gn[24]
+p:gn[25]
+p:gn[26]
+p:gn[27]
+p:gp[0]
+p:gp[1]
+p:gp[2]
+p:gp[3]
+p:gp[4]
+p:gp[5]
+p:gp[6]
+p:gp[7]
+p:gp[8]
+p:gp[9]
+p:gp[10]
+p:gp[11]
+p:gp[12]
+p:gp[13]
+p:gp[14]
+p:gp[15]
+p:gp[16]
+p:gp[17]
+p:gp[18]
+p:gp[19]
+p:gp[20]
+p:gp[21]
+p:gp[22]
+p:gp[23]
+p:gp[24]
+p:gp[25]
+p:gp[26]
+p:gp[27]
+p:led[0]
+p:led[1]
+p:led[2]
+p:led[3]
+p:led[4]
+p:led[5]
+p:led[6]
+p:led[7]
+p:oled_clk
+p:oled_csn
+p:oled_dc
+p:oled_mosi
+p:oled_resn
+p:sd_cdn
+p:sd_clk
+p:sd_cmd_di
+p:sd_dat0_do
+p:sd_dat1_irq
+p:sd_dat2
+p:sd_dat3_csn
+p:sd_wp
+p:shutdown
+p:sw[1]
+p:sw[2]
+p:sw[3]
+p:sw[4]
+p:usb_fpga_bd_dn
+p:usb_fpga_bd_dp
+p:usb_fpga_dp
+p:usb_fpga_pu_dn
+p:usb_fpga_pu_dp
+p:wifi_en
+p:wifi_gpio0
+p:wifi_gpio2
+p:wifi_gpio15
+p:wifi_gpio16
+p:wifi_rxd
+p:wifi_txd
+
+
+Inapplicable constraints
+************************
+
+(none)
+
+
+Applicable constraints with issues
+**********************************
+
+(none)
+
+
+Constraints with matching wildcard expressions
+**********************************************
+
+(none)
+
+
+Library Report
+**************
+
+
+# End of Constraint Checker Report

@@ -1,0 +1,32 @@
+NOTE Copyright (C), 1992-2010, Lattice Semiconductor Corporation *
+NOTE All Rights Reserved *
+NOTE DATE CREATED: Mon Dec 17 22:27:04 2018 *
+NOTE DESIGN NAME: ulx3s_usbtest *
+NOTE DEVICE NAME: LFE5U-85F-6CABGA381 *
+NOTE PIN ASSIGNMENTS *
+NOTE PINS ftdi_rxd : L4 : out *
+NOTE PINS clk_25mhz : G2 : in *
+NOTE PINS shutdown : G16 : out *
+NOTE PINS usb_fpga_pu_dp : B12 : out *
+NOTE PINS oled_resn : P2 : out *
+NOTE PINS oled_dc : P1 : out *
+NOTE PINS oled_mosi : P3 : out *
+NOTE PINS oled_clk : P4 : out *
+NOTE PINS oled_csn : N2 : out *
+NOTE PINS btn[0] : D6 : in *
+NOTE PINS led[7] : H3 : out *
+NOTE PINS led[6] : E1 : out *
+NOTE PINS led[5] : E2 : out *
+NOTE PINS led[4] : D1 : out *
+NOTE PINS led[3] : D2 : out *
+NOTE PINS led[2] : C1 : out *
+NOTE PINS led[1] : C2 : out *
+NOTE PINS led[0] : B2 : out *
+NOTE PINS wifi_gpio0 : L2 : out *
+NOTE PINS wifi_en : F1 : out *
+NOTE PINS wifi_rxd : K3 : out *
+NOTE PINS SYSCONFIG_PIN_D1 : V2 : inout *
+NOTE PINS SYSCONFIG_PIN_D0 : W2 : inout *
+NOTE PINS SYSCONFIG_PIN_HOLDN : R2 : inout *
+NOTE CONFIGURATION MODE: JTAG *
+NOTE COMPRESSION: on *

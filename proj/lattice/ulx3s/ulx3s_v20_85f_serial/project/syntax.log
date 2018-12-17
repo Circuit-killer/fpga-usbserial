@@ -1,0 +1,18 @@
+Synopsys VHDL Compiler, version comp201509p1, Build 145R, built Dec  9 2015
+@N|Running in 64-bit mode
+Copyright (C) 1994-2015 Synopsys, Inc. This software and the associated documentation are proprietary to Synopsys, Inc. This software may only be used in accordance with the terms and conditions of a written license agreement with Synopsys, Inc.  All other use, reproduction, or distribution of this software is strictly prohibited.
+
+Running on host :brix4
+@N: CD720 :"/mt/lattice/diamond/3.7_x64/synpbase/lib/vhd/std.vhd":123:18:123:21|Setting time resolution to ns
+@N:"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":18:7:18:19|Top entity is set to ulx3s_usbtest.
+@W: CD643 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":14:34:14:34|Ignoring use clause - usb_req_gen_func_pack not found ...
+@W: CD643 :"/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/top/ulx3s_usbserial.vhd":16:32:16:32|Ignoring use clause - report_decoded_pack not found ...
+
+At c_vhdl Exit (Real Time elapsed 0h:00m:00s; CPU Time elapsed 0h:00m:00s; Memory used current: 72MB peak: 73MB)
+
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+
+Process completed successfully.
+# Mon Dec 17 22:25:59 2018
+
+###########################################################]

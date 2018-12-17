@@ -1,0 +1,8 @@
+/mt/lattice/diamond/3.7_x64/synpbase/bin/syn_nfilter  -link  -top  ulx3s_usbtest  -incremental_debug  -multisrs  /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_comp.srs  -osyn  /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_mult.srs  -log  /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synlog/project_project_multi_srs_gen.srr 
+rc:0 success:1 runtime:0
+/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_comp.srs|i|1545081960|13199
+/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_mult.srs|o|1545081961|4930
+/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synlog/project_project_multi_srs_gen.srr|o|1545081961|398
+/mt/lattice/diamond/3.7_x64/synpbase/linux_a_64/syn_nfilter|i|1449681916|9727656
+/mt/lattice/diamond/3.7_x64/synpbase/linux/syn_nfilter|i|1449681960|9183196
+/mt/lattice/diamond/3.7_x64/synpbase/bin/syn_nfilter|i|1463319087|368

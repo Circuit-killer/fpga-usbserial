@@ -1,0 +1,32 @@
+---------------------------------------------------
+Report for cell ulx3s_usbtest
+   Instance path: ulx3s_usbtest
+                     Cell usage:
+                                  cell	      count    Res Usage(%)
+                                  SLIC	      70.00        100.0
+                                 IOLGC	       1.00        100.0
+                                  LUT4	      91.00        100.0
+                                 IOREG	          1        100.0
+                                 IOBUF	         21        100.0
+                                PFUREG	         60        100.0
+                                RIPPLE	         13        100.0
+SUB MODULES
+                                  cell	      count    SLC Usage(%)
+                                  oled	          1        98.6
+              clk_25M_100M_7M5_12M_60M	          1         1.4
+---------------------------------------------------
+Report for cell oled
+   Instance path: ulx3s_usbtest/g_oled.oled_inst
+                     Cell usage:
+                                  cell	      count    Res Usage(%)
+                                  SLIC	      69.00        98.6
+                                  LUT4	      90.00        98.9
+                                PFUREG	         60        100.0
+                                RIPPLE	         13        100.0
+---------------------------------------------------
+Report for cell clk_25M_100M_7M5_12M_60M
+   Instance path: ulx3s_usbtest/clk_pll
+                     Cell usage:
+                                  cell	      count    Res Usage(%)
+                                  SLIC	       1.00         1.4
+                                  LUT4	       1.00         1.1

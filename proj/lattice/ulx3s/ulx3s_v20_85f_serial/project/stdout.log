@@ -1,0 +1,111 @@
+Running in Lattice mode
+
+sourcing /mt/lattice/diamond/3.7_x64/synpbase/lib/message_override.tcl
+
+
+Starting:    /mt/lattice/diamond/3.7_x64/synpbase/linux_a_64/mbin/synbatch
+Install:     /mt/lattice/diamond/3.7_x64/synpbase
+Hostname:    brix4
+Date:        Mon Dec 17 22:25:59 2018
+Version:     K-2015.09L-2
+
+Arguments:   -product synplify_pro -batch project_project_synplify.tcl
+ProductType: synplify_pro
+
+
+
+
+
+log file: "/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srr"
+
+Running: hdl_info_gen in foreground
+
+
+
+Generating HDL info...
+
+
+hdl_info_gen Completed
+Return Code: 0
+Run Time:00h:00m:00s
+
+log file: "/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srr"
+
+Running: project in foreground
+
+
+
+Running proj_1|project
+
+
+Running: compile (Compile) on proj_1|project
+
+
+Running: compile_flow (Compile Process) on proj_1|project
+
+
+Running: compiler (Compile Input) on proj_1|project
+
+Copied /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_comp.srs to /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srs
+
+
+compiler Completed
+Return Code: 0
+Run Time:00h:00m:02s
+
+
+Running: multi_srs_gen (Multi-srs Generator) on proj_1|project
+
+Copied /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_comp.srs to /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_s.srs
+
+
+multi_srs_gen Completed
+Return Code: 0
+Run Time:00h:00m:00s
+
+Copied /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srr to /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srf
+
+Complete: Compile Process on proj_1|project
+
+
+Running: premap (Pre-mapping) on proj_1|project
+
+
+premap Completed with warnings
+Return Code: 1
+Run Time:00h:00m:01s
+
+Complete: Compile on proj_1|project
+
+
+Running: map (Map) on proj_1|project
+
+License granted for 4 parallel jobs
+
+
+Running: fpga_mapper (Map & Optimize) on proj_1|project
+
+Copied /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/synwork/project_project_m.srm to /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srm
+
+
+fpga_mapper Completed with warnings
+Return Code: 1
+Run Time:00h:00m:02s
+
+Complete: Map on proj_1|project
+
+Copied /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srr to /home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/project_project.srf
+
+Complete: Logic Synthesis on proj_1|project
+
+TCL script complete: "project_project_synplify.tcl"
+
+exit status=0
+
+exit status=0
+
+Save changes for project:
+/home/guest/src/fpga/usb-serial/usb-serial-demo/proj/lattice/ulx3s/ulx3s_v20_85f_serial/project/proj_1.prj
+
+batch mode default:no
+
