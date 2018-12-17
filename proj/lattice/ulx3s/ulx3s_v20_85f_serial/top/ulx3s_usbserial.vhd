@@ -73,14 +73,17 @@ entity ulx3s_usbtest is
   --sd_cdn, sd_wp: inout std_logic := 'Z'
 
   -- SHUTDOWN: logic '1' here will shutdown power on PCB >= v1.7.5
-  shutdown: out std_logic := '0';
+  shutdown: out std_logic := '0'
   );
 end;
 
 architecture Behavioral of ulx3s_usbtest is
   signal clk_100MHz, clk_60MHz, clk_7M5Hz, clk_12MHz: std_logic;
-  signal S_reset: std_logic;  
+  signal S_reset: std_logic;
+  signal S_usb_fpga_dn: std_logic;
+  signal S_txdp, S_txdn, S_txoe: std_logic;
   signal S_hid_report: std_logic_vector(63 downto 0);
+  signal S_LineState: std_logic_vector(1 downto 0);
 begin
   clk_pll: entity work.clk_25M_100M_7M5_12M_60M
   port map
@@ -104,6 +107,40 @@ begin
   usb_fpga_pu_dp <= '1'; -- pullup for USB1.1 device
   usb_fpga_pu_dn <= 'Z';
 
+  S_usb_fpga_dn <= not usb_fpga_dp;
+  usb_fpga_bd_dp <= S_txdp when S_txoe = '1' else 'Z';
+  usb_fpga_bd_dn <= S_txdn when S_txoe = '1' else 'Z';
+
+  -- USB1.1 PHY
+  usb11_phy: entity work.usb_phy
+  generic map
+  (
+    usb_rst_det => true
+  )
+  port map
+  (
+    clk => clk_60MHz,
+    rst => S_reset,
+    phy_tx_mode => btn(1), -- 1-differential 0-single-ended
+    usb_rst => open,
+    -- transciever interface
+    rxd => usb_fpga_dp,
+    rxdp => usb_fpga_dp,
+    rxdn => S_usb_fpga_dn,
+    txdp => S_txdp,
+    txdn => S_txdn,
+    txoe => S_txoe,
+    -- utmi interface
+    DataOut_i => (others => '0'), -- 8-bit
+    TxValid_i => '0',
+    TxReady_o => open,
+    DataIn_o => open, -- 8-bit
+    RxValid_o => open,
+    RxActive_o => open,
+    RxError_o => open,
+    LineState_o => S_LineState -- 2-bit
+  );
+
   -- see the HID report on the OLED
   g_oled: if true generate
   oled_inst: entity work.oled
@@ -124,6 +161,7 @@ begin
   );
   end generate;
 
-  led(7 downto 0) <= x"55";
+  led(7 downto 4) <= x"5";
+  led(1 downto 0) <= S_LineState;
 
 end Behavioral;
