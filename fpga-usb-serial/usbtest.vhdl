@@ -130,7 +130,7 @@ begin
 --            VENDORSTR       => "Joris",
 --            PRODUCTSTR      => "Trenz TE0146 module with fpga_usb_serial firmware",
 --            SERIALSTR       => "20111004",
-            HSSUPPORT       => true,
+            HSSUPPORT       => false,
             SELFPOWERED     => false,
             RXBUFSIZE_BITS  => RXBUFSIZE_BITS,
             TXBUFSIZE_BITS  => TXBUFSIZE_BITS )

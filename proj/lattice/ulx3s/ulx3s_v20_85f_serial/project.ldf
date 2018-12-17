@@ -9,6 +9,27 @@
         <Source name="../../../../lattice/ulx3s/clocks/clk_25M_100M_7M5_12M_60M.vhd" type="VHDL" type_short="VHDL">
             <Options/>
         </Source>
+        <Source name="../../../../fpga-usb-serial/usbtest.vhdl" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../fpga-usb-serial/usb_serial.vhdl" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../fpga-usb-serial/usb_transact.vhdl" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../fpga-usb-serial/usb_pkg.vhdl" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../fpga-usb-serial/usb_packet.vhdl" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../fpga-usb-serial/usb_init.vhdl" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
+        <Source name="../../../../fpga-usb-serial/usb_control.vhdl" type="VHDL" type_short="VHDL">
+            <Options/>
+        </Source>
         <Source name="../../../../usb11_phy_vhdl/usb_phy.vhd" type="VHDL" type_short="VHDL">
             <Options/>
         </Source>
