@@ -149,6 +149,7 @@ package usb_pkg is
             TXRDY :         out std_logic;          -- Entity ready to accept next byte
             TXROOM :        out std_logic_vector(TXBUFSIZE_BITS-1 downto 0);
             TXCORK :        in  std_logic;          -- Suppress data transmission
+            dsctyp :        out std_logic_vector(2 downto 0); -- debugging
             PHY_DATAIN :    in  std_logic_vector(7 downto 0);
             PHY_DATAOUT :   out std_logic_vector(7 downto 0);
             PHY_TXVALID :   out std_logic;

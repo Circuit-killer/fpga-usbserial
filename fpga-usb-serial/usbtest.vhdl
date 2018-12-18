@@ -52,6 +52,7 @@ entity usbtest is
 
     port(
         LED :             out std_logic;
+        dsctyp :          out std_logic_vector(2 downto 0);
 	PHY_DATABUS16_8 : out std_logic;
 	PHY_RESET :       out std_logic;
 	PHY_XCVRSELECT :  out std_logic;
@@ -150,6 +151,7 @@ begin
             TXRDY           => usb_txrdy,
             TXROOM          => usb_txroom,
             TXCORK          => s_txcork,
+            dsctyp          => dsctyp, -- debugging
             PHY_DATAIN      => PHY_DATAIN,
             PHY_DATAOUT     => PHY_DATAOUT,
             PHY_TXVALID     => PHY_TXVALID,

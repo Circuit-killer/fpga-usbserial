@@ -151,6 +151,9 @@ entity usb_serial is
         -- buffer in order to blast data efficiently in big chunks.
         TXCORK :        in  std_logic;
 
+	-- debug output to show descriptor type
+	dsctyp : out std_logic_vector(2 downto 0);
+
         PHY_DATAIN :    in  std_logic_vector(7 downto 0);
 	PHY_DATAOUT :   out std_logic_vector(7 downto 0);
 	PHY_TXVALID :   out std_logic;
@@ -1143,6 +1146,8 @@ begin
     end process;
     assert to_integer(descrom_raddr) < descrom'length;
     descrom_rdat <= descrom(to_integer(descrom_raddr));
+
+    dsctyp <= usbc_dsctyp;
 
 end architecture usb_serial_arch;
 

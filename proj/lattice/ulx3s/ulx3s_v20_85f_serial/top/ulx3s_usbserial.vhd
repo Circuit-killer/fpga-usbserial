@@ -85,6 +85,7 @@ architecture Behavioral of ulx3s_usbtest is
   signal S_usb_fpga_dp, S_usb_fpga_dn: std_logic;
   signal S_txdp, S_txdn, S_txoe: std_logic;
   signal S_hid_report: std_logic_vector(63 downto 0);
+  signal S_dsctyp: std_logic_vector(2 downto 0);
   signal S_DATABUS16_8: std_logic;
   signal S_RESET: std_logic;
   signal S_XCVRSELECT: std_logic;
@@ -122,6 +123,7 @@ begin
   port map
   (
     led => S_led,
+    dsctyp => S_dsctyp,
     PHY_DATABUS16_8 => S_DATABUS16_8,
     PHY_RESET => S_RESET,
     PHY_XCVRSELECT => S_XCVRSELECT,
@@ -179,6 +181,7 @@ begin
 
   -- see the HID report on the OLED
   g_oled: if true generate
+  S_hid_report(2 downto 0) <= S_dsctyp;
   oled_inst: entity work.oled
   generic map
   (
