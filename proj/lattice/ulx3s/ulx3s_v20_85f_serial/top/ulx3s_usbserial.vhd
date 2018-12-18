@@ -18,7 +18,7 @@ use work.report_decoded_pack.all;
 entity ulx3s_usbtest is
   generic
   (
-    C_dummy_constant: integer := 0
+    C_external_ulpi: boolean := false
   );
   port
   (
@@ -80,9 +80,10 @@ end;
 
 architecture Behavioral of ulx3s_usbtest is
   signal clk_100MHz, clk_60MHz, clk_7M5Hz, clk_12MHz: std_logic;
+  signal clk_usb_60MHz: std_logic;
   signal S_led: std_logic;
   signal S_usb_rst: std_logic;
-  signal S_usb_fpga_dp, S_usb_fpga_dn: std_logic;
+  signal S_rxdp, S_rxdn: std_logic;
   signal S_txdp, S_txdn, S_txoe: std_logic;
   signal S_hid_report: std_logic_vector(63 downto 0);
   signal S_dsctyp: std_logic_vector(2 downto 0);
@@ -99,6 +100,40 @@ architecture Behavioral of ulx3s_usbtest is
   signal S_RXERROR: std_logic;
   signal S_DATAIN: std_logic_vector(7 downto 0);
   signal S_DATAOUT: std_logic_vector(7 downto 0);
+  signal S_ulpi_data_out_i, S_ulpi_data_in_o: std_logic_vector(7 downto 0);
+  signal S_ulpi_dir_i: std_logic;
+
+  component ulpi_wrapper
+    --generic (
+    --  dummy_x          : integer := 0;  -- 0-normal X, 1-double X
+    --  dummy_y          : integer := 0   -- 0-normal X, 1-double X
+    --);
+    port
+    (
+      -- ULPI Interface (PHY)
+      ulpi_clk60_i: in std_logic;  -- input clock 60 MHz
+      ulpi_rst_i: in std_logic;
+      ulpi_data_out_i: in std_logic_vector(7 downto 0);
+      ulpi_data_in_o: out std_logic_vector(7 downto 0);
+      ulpi_dir_i: in std_logic;
+      ulpi_nxt_i: in std_logic;
+      ulpi_stp_o: out std_logic;
+      -- UTMI Interface (SIE)
+      utmi_txvalid_i: in std_logic;
+      utmi_txready_o: out std_logic;
+      utmi_rxvalid_o: out std_logic;
+      utmi_rxactive_o: out std_logic;
+      utmi_rxerror_o: out std_logic;
+      utmi_data_in_o: out std_logic_vector(7 downto 0);
+      utmi_data_out_i: in std_logic_vector(7 downto 0);
+      utmi_xcvrselect_i: in std_logic_vector(1 downto 0);
+      utmi_termselect_i: in std_logic;
+      utmi_op_mode_i: in std_logic_vector(1 downto 0);
+      utmi_dppulldown_i: in std_logic;
+      utmi_dmpulldown_i: in std_logic;
+      utmi_linestate_o: out std_logic_vector(1 downto 0)
+    );
+  end component;
 begin
   clk_pll: entity work.clk_25M_100M_7M5_12M_60M
   port map
@@ -130,7 +165,7 @@ begin
     PHY_TERMSELECT => S_TERMSELECT,
     PHY_OPMODE => S_OPMODE,
     PHY_LINESTATE => S_LINESTATE,
-    PHY_CLKOUT => clk_60MHz,
+    PHY_CLKOUT => clk_usb_60MHz,
     PHY_TXVALID => S_TXVALID,
     PHY_TXREADY => S_TXREADY,
     PHY_RXVALID => S_RXVALID,
@@ -140,7 +175,8 @@ begin
     PHY_DATAOUT => S_DATAOUT
   );
 
-  -- USB1.1 PHY
+  G_internal_usb_phy: if not C_external_ulpi generate
+  -- USB1.1 PHY in[B VHDL source
   usb11_phy: entity work.usb_phy
   generic map
   (
@@ -148,14 +184,14 @@ begin
   )
   port map
   (
-    clk => clk_60MHz,
+    clk => clk_usb_60MHz,
     rst => S_reset,
     phy_tx_mode => btn(1), -- 1-differential 0-single-ended
     usb_rst => S_usb_rst,
     -- transciever interface
-    rxd => S_usb_fpga_dp,
-    rxdp => S_usb_fpga_dp,
-    rxdn => S_usb_fpga_dn,
+    rxd => S_rxdp,
+    rxdp => S_rxdp,
+    rxdn => S_rxdn,
     txdp => S_txdp,
     txdn => S_txdn,
     txoe => S_txoe,
@@ -173,11 +209,46 @@ begin
   usb_fpga_pu_dp <= '1'; -- pullup for USB1.1 device mode
   usb_fpga_pu_dn <= 'Z';
 
-  S_usb_fpga_dp <= usb_fpga_bd_dp;
-  S_usb_fpga_dn <= usb_fpga_bd_dn;
+  S_rxdp <= usb_fpga_dp;
+  S_rxdn <= usb_fpga_dn;
   -- S_usb_fpga_dn <= not usb_fpga_dp; -- when differential
   usb_fpga_bd_dp <= S_txdp when S_txoe = '0' else 'Z';
   usb_fpga_bd_dn <= S_txdn when S_txoe = '0' else 'Z';
+  clk_usb_60MHz <= clk_60MHz;
+  end generate;
+
+  G_external_usb_phy: if C_external_ulpi generate
+  external_ulpi: ulpi_wrapper
+  port map
+  (
+      -- ULPI Interface (PHY)
+      ulpi_clk60_i => clk_usb_60MHz,  -- input clock 60 MHz
+      ulpi_rst_i => gn(0),
+      ulpi_data_out_i => S_ulpi_data_out_i,
+      ulpi_data_in_o => S_ulpi_data_in_o,
+      ulpi_dir_i => S_ulpi_dir_i, -- '1' wrapper reads ulpi_data_out_i, '0' wrapper writes ulpi_data_in_o
+      ulpi_nxt_i => gn(9),
+      ulpi_stp_o => gp(10),
+      -- UTMI Interface (SIE)
+      utmi_txvalid_i => S_TXVALID,
+      utmi_txready_o => S_TXREADY,
+      utmi_rxvalid_o => S_RXVALID,
+      utmi_rxactive_o => S_RXACTIVE,
+      utmi_rxerror_o => S_RXERROR,
+      utmi_data_in_o => S_DATAIN, -- 8-bit
+      utmi_data_out_i => S_DATAOUT, -- 8-bit
+      utmi_xcvrselect_i => "01", -- peripheral FS (full speed) tusb3340 p.20
+      utmi_termselect_i => '1', -- peripheral FS (full speed) tusb3340 p.20
+      utmi_op_mode_i => S_OPMODE,
+      utmi_dppulldown_i => '0', -- peripheral FS (full speed) tusb3340 p.20
+      utmi_dmpulldown_i => '0', -- peripheral FS (full speed) tusb3340 p.20
+      utmi_linestate_o => S_LINESTATE -- 2-bit
+  );
+  S_ulpi_dir_i <= gp(9);
+  S_ulpi_data_out_i <= gp(8 downto 1);
+  gp(8 downto 1) <= S_ulpi_data_in_o when S_ulpi_dir_i = '0' else (others => 'Z');
+  clk_usb_60MHz <= gp(0);
+  end generate;
 
   -- see the HID report on the OLED
   g_oled: if true generate
