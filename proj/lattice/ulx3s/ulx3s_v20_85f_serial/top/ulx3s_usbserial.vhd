@@ -181,6 +181,7 @@ begin
 
   -- see the HID report on the OLED
   g_oled: if true generate
+  S_hid_report(5 downto 4) <= S_LINESTATE;
   S_hid_report(2 downto 0) <= S_dsctyp;
   oled_inst: entity work.oled
   generic map
