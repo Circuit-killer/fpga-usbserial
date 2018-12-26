@@ -5,7 +5,7 @@ Buffers typed characters. After pressin RETURN prints buffered
 characters in reverse order.
 
 Total 6 FPGA pins are used
-(see ["usb" sheet of ULX3S schematics](https://github.com/emard/ulx3s/doc/schematics.pdf)):
+(see ["usb" sheet of ULX3S schematics](https://github.com/emard/ulx3s/tree/master/doc/schematics.pdf)):
 
     2 differential input pins
     2 single-ended bidirectional pins
