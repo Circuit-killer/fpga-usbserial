@@ -54,7 +54,7 @@ entity ulx3s_usbtest is
   
   -- FPGA direct USB connector
   usb_fpga_dp: in std_logic; -- differential or single-ended input
-  usb_fpga_dn: in std_logic; -- single-ended input
+  usb_fpga_dn: in std_logic; -- only for single-ended input
   usb_fpga_bd_dp, usb_fpga_bd_dn: inout std_logic; -- single ended bidirectional
   usb_fpga_pu_dp, usb_fpga_pu_dn: inout std_logic; -- pull up for slave, down for host mode
 
@@ -83,6 +83,7 @@ architecture Behavioral of ulx3s_usbtest is
   signal clk_usb_60MHz: std_logic;
   signal S_led: std_logic;
   signal S_usb_rst: std_logic;
+  signal S_rxd: std_logic;
   signal S_rxdp, S_rxdn: std_logic;
   signal S_txdp, S_txdn, S_txoe: std_logic;
   signal S_hid_report: std_logic_vector(63 downto 0);
@@ -102,6 +103,17 @@ architecture Behavioral of ulx3s_usbtest is
   signal S_DATAOUT: std_logic_vector(7 downto 0);
   signal S_ulpi_data_out_i, S_ulpi_data_in_o: std_logic_vector(7 downto 0);
   signal S_ulpi_dir_i: std_logic;
+  -- registers for OLED
+  signal R_txdp, R_txdn: std_logic;
+  signal R_OPMODE: std_logic_vector(1 downto 0);
+  signal R_LINESTATE: std_logic_vector(1 downto 0);
+  signal R_TXVALID: std_logic;
+  signal R_TXREADY: std_logic;
+  signal R_RXVALID: std_logic;
+  signal R_RXACTIVE: std_logic;
+  signal R_RXERROR: std_logic;
+  signal R_DATAIN: std_logic_vector(7 downto 0);
+  signal R_DATAOUT: std_logic_vector(7 downto 0);
 
   component ulpi_wrapper
     --generic (
@@ -164,18 +176,19 @@ begin
     PHY_XCVRSELECT => S_XCVRSELECT,
     PHY_TERMSELECT => S_TERMSELECT,
     PHY_OPMODE => S_OPMODE,
-    PHY_LINESTATE => S_LINESTATE,
     PHY_CLKOUT => clk_usb_60MHz,
+    PHY_DATAOUT => S_DATAOUT,
     PHY_TXVALID => S_TXVALID,
     PHY_TXREADY => S_TXREADY,
+    PHY_DATAIN => S_DATAIN,
     PHY_RXVALID => S_RXVALID,
     PHY_RXACTIVE => S_RXACTIVE,
     PHY_RXERROR => S_RXERROR,
-    PHY_DATAIN => S_DATAIN,
-    PHY_DATAOUT => S_DATAOUT
+    PHY_LINESTATE => S_LINESTATE
   );
 
   G_internal_usb_phy: if not C_external_ulpi generate
+  clk_usb_60MHz <= clk_60MHz;
   -- USB1.1 PHY in[B VHDL source
   usb11_phy: entity work.usb_phy
   generic map
@@ -185,17 +198,10 @@ begin
   port map
   (
     clk => clk_usb_60MHz,
-    rst => S_reset,
+    rst => btn(0),
     phy_tx_mode => btn(1), -- 1-differential 0-single-ended
     usb_rst => S_usb_rst,
-    -- transciever interface
-    rxd => S_rxdp,
-    rxdp => S_rxdp,
-    rxdn => S_rxdn,
-    txdp => S_txdp,
-    txdn => S_txdn,
-    txoe => S_txoe,
-    -- utmi interface
+    -- UTMI interface
     DataOut_i => S_DATAOUT, -- 8-bit
     TxValid_i => S_TXVALID,
     TxReady_o => S_TXREADY,
@@ -203,57 +209,91 @@ begin
     RxValid_o => S_RXVALID,
     RxActive_o => S_RXACTIVE,
     RxError_o => S_RXERROR,
-    LineState_o => S_LINESTATE -- 2-bit
+    LineState_o => S_LINESTATE, -- 2-bit
+    -- transciever interface
+    rxd => S_rxd,
+    rxdp => S_rxdp,
+    rxdn => S_rxdn,
+    txdp => S_txdp,
+    txdn => S_txdn,
+    txoe => S_txoe
   );
-
+  -- simple transciever
   usb_fpga_pu_dp <= '1'; -- pullup for USB1.1 device mode
   usb_fpga_pu_dn <= 'Z';
 
-  S_rxdp <= usb_fpga_dp;
-  S_rxdn <= usb_fpga_dn;
-  -- S_usb_fpga_dn <= not usb_fpga_dp; -- when differential
+  S_rxd <= usb_fpga_dp; -- differential input read D+
+  S_rxdp <= usb_fpga_bd_dp; -- single-ended read D+
+  S_rxdn <= usb_fpga_bd_dn; -- single-ended read D-
   usb_fpga_bd_dp <= S_txdp when S_txoe = '0' else 'Z';
   usb_fpga_bd_dn <= S_txdn when S_txoe = '0' else 'Z';
-  clk_usb_60MHz <= clk_60MHz;
-  end generate;
+  end generate G_internal_usb_phy;
 
   G_external_usb_phy: if C_external_ulpi generate
   external_ulpi: ulpi_wrapper
   port map
   (
-      -- ULPI Interface (PHY)
+      -- UTMI Interface (SIE) to core
+      utmi_op_mode_i => S_OPMODE,
+      utmi_linestate_o => S_LINESTATE, -- 2-bit
+      utmi_data_in_o => S_DATAIN, -- 8-bit
+      utmi_txvalid_i => S_TXVALID,
+      utmi_txready_o => S_TXREADY,
+      utmi_data_out_i => S_DATAOUT, -- 8-bit
+      utmi_rxvalid_o => S_RXVALID,
+      utmi_rxactive_o => S_RXACTIVE,
+      utmi_rxerror_o => S_RXERROR,
+      utmi_xcvrselect_i => "01", -- peripheral FS (full speed) tusb3340 p.20
+      utmi_termselect_i => '1', -- peripheral FS (full speed) tusb3340 p.20
+      utmi_dppulldown_i => '0', -- peripheral FS (full speed) tusb3340 p.20
+      utmi_dmpulldown_i => '0',  -- peripheral FS (full speed) tusb3340 p.20
+      -- ULPI Interface (PHY) to chip e.g. TUSB3340
       ulpi_clk60_i => clk_usb_60MHz,  -- input clock 60 MHz
       ulpi_rst_i => gn(0),
       ulpi_data_out_i => S_ulpi_data_out_i,
       ulpi_data_in_o => S_ulpi_data_in_o,
       ulpi_dir_i => S_ulpi_dir_i, -- '1' wrapper reads ulpi_data_out_i, '0' wrapper writes ulpi_data_in_o
       ulpi_nxt_i => gn(9),
-      ulpi_stp_o => gp(10),
-      -- UTMI Interface (SIE)
-      utmi_txvalid_i => S_TXVALID,
-      utmi_txready_o => S_TXREADY,
-      utmi_rxvalid_o => S_RXVALID,
-      utmi_rxactive_o => S_RXACTIVE,
-      utmi_rxerror_o => S_RXERROR,
-      utmi_data_in_o => S_DATAIN, -- 8-bit
-      utmi_data_out_i => S_DATAOUT, -- 8-bit
-      utmi_xcvrselect_i => "01", -- peripheral FS (full speed) tusb3340 p.20
-      utmi_termselect_i => '1', -- peripheral FS (full speed) tusb3340 p.20
-      utmi_op_mode_i => S_OPMODE,
-      utmi_dppulldown_i => '0', -- peripheral FS (full speed) tusb3340 p.20
-      utmi_dmpulldown_i => '0', -- peripheral FS (full speed) tusb3340 p.20
-      utmi_linestate_o => S_LINESTATE -- 2-bit
+      ulpi_stp_o => gp(10)
   );
   S_ulpi_dir_i <= gp(9);
   S_ulpi_data_out_i <= gp(8 downto 1);
   gp(8 downto 1) <= S_ulpi_data_in_o when S_ulpi_dir_i = '0' else (others => 'Z');
   clk_usb_60MHz <= gp(0);
-  end generate;
+  end generate G_external_usb_phy;
 
   -- see the HID report on the OLED
   g_oled: if true generate
-  S_hid_report(5 downto 4) <= S_LINESTATE;
-  S_hid_report(2 downto 0) <= S_dsctyp;
+  process(clk_60MHz)
+  begin
+    if rising_edge(clk_60MHz) then
+      R_txdp <= usb_fpga_bd_dp;
+      R_txdn <= usb_fpga_bd_dn;
+      R_OPMODE <= S_OPMODE;
+      R_LINESTATE <= S_LINESTATE; -- 2-bit
+      if S_TXVALID = '1' then
+        R_DATAIN <= S_DATAIN;
+      end if;
+      R_TXVALID <= S_TXVALID;
+      R_TXREADY <= S_TXREADY;
+      if S_RXVALID = '1' then
+        R_DATAOUT <= S_DATAOUT;
+      end if;
+      R_RXVALID <= S_RXVALID;
+      R_RXACTIVE <= S_RXACTIVE;
+      R_RXERROR <= S_RXERROR;
+    end if;  
+  end process;
+  S_hid_report(45 downto 44) <= R_txdp & R_txdn;  
+  S_hid_report(41 downto 40) <= R_OPMODE;
+  S_hid_report(37 downto 36) <= R_LINESTATE;
+  S_hid_report(32) <= R_TXVALID;
+  S_hid_report(28) <= R_TXREADY;
+  S_hid_report(24) <= R_RXVALID;
+  S_hid_report(20) <= R_RXACTIVE;
+  S_hid_report(16) <= R_RXERROR;
+  S_hid_report(15 downto 8) <= R_DATAIN;
+  S_hid_report(7 downto 0) <= R_DATAOUT;
   oled_inst: entity work.oled
   generic map
   (
