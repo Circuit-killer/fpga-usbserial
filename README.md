@@ -1,4 +1,15 @@
-# Attempt#2 to make usb-serial core
+# usb-serial core
 
-It doesn't work. LEDs blink on plugging when
-host tries to enumerate and it gives up.
+Enumerates as USB1.1 serial port seen as /dev/ttyACM0 on linux.
+Buffers typed characters. After pressin RETURN prints buffered
+characters in reverse order.
+
+Total 6 FPGA pins are used
+(see ["usb" sheet of ULX3S schematics](https://github.com/emard/ulx3s/doc/schematics.pdf)):
+
+    2 differential input pins
+    2 single-ended bidirectional pins
+    2 single-ended pullup/pulldown control pins (optional)
+
+To save 2 pins, instead of pullup/pulldown control pins,
+a fixed pullup resistor of 1.5k between D+ and 3.3V can be used.
