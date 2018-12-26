@@ -23,5 +23,4 @@ USB devices with properly wired connectors are used.
 
 # issues
 
-It doesn't enumerate (doesn't work at all) on some USB2.x ports.
-It doesn't work reliable (looses chars) on most USB3.x ports.
+Sometimes it doesn't enumerate (doesn't work at all) on some USB ports.
