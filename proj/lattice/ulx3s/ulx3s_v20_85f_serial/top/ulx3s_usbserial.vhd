@@ -83,6 +83,8 @@ architecture Behavioral of ulx3s_usbtest is
   signal clk_usb_60MHz: std_logic;
   signal S_led: std_logic;
   signal S_usb_rst: std_logic;
+  signal R_rst_btn: std_logic;
+  signal R_phy_txmode: std_logic;
   signal S_rxd: std_logic;
   signal S_rxdp, S_rxdn: std_logic;
   signal S_txdp, S_txdn, S_txoe: std_logic;
@@ -162,10 +164,9 @@ begin
   --wifi_rxd <= ftdi_txd;
 
   wifi_en <= '1';
-  wifi_gpio0 <= btn(0);
-  -- S_reset <= not btn(0);
+  wifi_gpio0 <= R_rst_btn;
   
-  -- USB-SERIAL core
+  -- USB-SERIAL soft-core
   usb_serial_core: entity work.usbtest
   port map
   (
@@ -177,11 +178,11 @@ begin
     PHY_TERMSELECT => S_TERMSELECT,
     PHY_OPMODE => S_OPMODE,
     PHY_CLKOUT => clk_usb_60MHz,
-    PHY_DATAOUT => S_DATAOUT,
     PHY_TXVALID => S_TXVALID,
+    PHY_DATAOUT => S_DATAOUT,
     PHY_TXREADY => S_TXREADY,
-    PHY_DATAIN => S_DATAIN,
     PHY_RXVALID => S_RXVALID,
+    PHY_DATAIN => S_DATAIN,
     PHY_RXACTIVE => S_RXACTIVE,
     PHY_RXERROR => S_RXERROR,
     PHY_LINESTATE => S_LINESTATE
@@ -189,7 +190,7 @@ begin
 
   G_internal_usb_phy: if not C_external_ulpi generate
   clk_usb_60MHz <= clk_60MHz;
-  -- USB1.1 PHY in[B VHDL source
+  -- USB1.1 PHY soft-core
   usb11_phy: entity work.usb_phy
   generic map
   (
@@ -198,33 +199,32 @@ begin
   port map
   (
     clk => clk_usb_60MHz,
-    rst => btn(0),
-    phy_tx_mode => btn(1), -- 1-differential 0-single-ended
-    usb_rst => S_usb_rst,
-    -- UTMI interface
-    DataOut_i => S_DATAOUT, -- 8-bit
+    rst => '1', -- 1-don't reset, 0-hold reset
+    phy_tx_mode => '1', -- 1-differential, 0-single-ended
+    usb_rst => S_usb_rst, -- USB host requests reset, sending signal to usb-serial core
+    -- UTMI interface to usb-serial core
     TxValid_i => S_TXVALID,
+    DataOut_i => S_DATAOUT, -- 8-bit TX
     TxReady_o => S_TXREADY,
-    DataIn_o => S_DATAIN, -- 8-bit
     RxValid_o => S_RXVALID,
+    DataIn_o => S_DATAIN, -- 8-bit RX
     RxActive_o => S_RXACTIVE,
     RxError_o => S_RXERROR,
     LineState_o => S_LINESTATE, -- 2-bit
-    -- transciever interface
-    rxd => S_rxd,
-    rxdp => S_rxdp,
-    rxdn => S_rxdn,
-    txdp => S_txdp,
-    txdn => S_txdn,
-    txoe => S_txoe
+    -- transciever interface to hardware
+    rxd => S_rxd, -- differential input from D+
+    rxdp => S_rxdp, -- single-ended input from D+
+    rxdn => S_rxdn, -- single-ended input from D-
+    txdp => S_txdp, -- single-ended output to D+
+    txdn => S_txdn, -- single-ended output to D-
+    txoe => S_txoe  -- 3-state control: 0-output, 1-input
   );
-  -- simple transciever
-  usb_fpga_pu_dp <= '1'; -- pullup for USB1.1 device mode
-  usb_fpga_pu_dn <= 'Z';
-
-  S_rxd <= usb_fpga_dp; -- differential input read D+
-  S_rxdp <= usb_fpga_bd_dp; -- single-ended read D+
-  S_rxdn <= usb_fpga_bd_dn; -- single-ended read D-
+  -- transciever soft-core
+  usb_fpga_pu_dp <= '1'; -- D+ pullup for USB1.1 device mode
+  usb_fpga_pu_dn <= 'Z'; -- D- no pullup for USB1.1 device mode
+  S_rxd <= usb_fpga_dp; -- differential input reads D+
+  S_rxdp <= usb_fpga_bd_dp; -- single-ended input reads D+
+  S_rxdn <= usb_fpga_bd_dn; -- single-ended input reads D-
   usb_fpga_bd_dp <= S_txdp when S_txoe = '0' else 'Z';
   usb_fpga_bd_dn <= S_txdn when S_txoe = '0' else 'Z';
   end generate G_internal_usb_phy;
@@ -236,11 +236,11 @@ begin
       -- UTMI Interface (SIE) to core
       utmi_op_mode_i => S_OPMODE,
       utmi_linestate_o => S_LINESTATE, -- 2-bit
-      utmi_data_in_o => S_DATAIN, -- 8-bit
       utmi_txvalid_i => S_TXVALID,
+      utmi_data_in_o => S_DATAIN, -- 8-bit TX
       utmi_txready_o => S_TXREADY,
-      utmi_data_out_i => S_DATAOUT, -- 8-bit
       utmi_rxvalid_o => S_RXVALID,
+      utmi_data_out_i => S_DATAOUT, -- 8-bit RX
       utmi_rxactive_o => S_RXACTIVE,
       utmi_rxerror_o => S_RXERROR,
       utmi_xcvrselect_i => "01", -- peripheral FS (full speed) tusb3340 p.20
@@ -267,14 +267,13 @@ begin
   process(clk_60MHz)
   begin
     if rising_edge(clk_60MHz) then
-      R_txdp <= usb_fpga_bd_dp;
-      R_txdn <= usb_fpga_bd_dn;
+      R_rst_btn <= btn(0);
       R_OPMODE <= S_OPMODE;
       R_LINESTATE <= S_LINESTATE; -- 2-bit
+      R_TXVALID <= S_TXVALID;
       if S_TXVALID = '1' then
         R_DATAIN <= S_DATAIN;
       end if;
-      R_TXVALID <= S_TXVALID;
       R_TXREADY <= S_TXREADY;
       if S_RXVALID = '1' then
         R_DATAOUT <= S_DATAOUT;
@@ -284,16 +283,15 @@ begin
       R_RXERROR <= S_RXERROR;
     end if;  
   end process;
-  S_hid_report(45 downto 44) <= R_txdp & R_txdn;  
   S_hid_report(41 downto 40) <= R_OPMODE;
   S_hid_report(37 downto 36) <= R_LINESTATE;
   S_hid_report(32) <= R_TXVALID;
-  S_hid_report(28) <= R_TXREADY;
-  S_hid_report(24) <= R_RXVALID;
-  S_hid_report(20) <= R_RXACTIVE;
-  S_hid_report(16) <= R_RXERROR;
-  S_hid_report(15 downto 8) <= R_DATAIN;
-  S_hid_report(7 downto 0) <= R_DATAOUT;
+  S_hid_report(31 downto 24) <= R_DATAIN;
+  S_hid_report(20) <= R_TXREADY;
+  S_hid_report(16) <= R_RXVALID;
+  S_hid_report(15 downto 8) <= R_DATAOUT;
+  S_hid_report(4) <= R_RXACTIVE;
+  S_hid_report(0) <= R_RXERROR;
   oled_inst: entity work.oled
   generic map
   (
@@ -313,8 +311,8 @@ begin
   end generate;
 
   led(7 downto 4) <= x"5";
-  led(3) <= S_usb_rst;
-  led(2) <= S_led;
-  led(1 downto 0) <= S_LineState;
+  led(3) <= S_usb_rst; -- blue, blinks on USB reset
+  led(2) <= S_led; -- green, should blink when enumerated
+  led(1 downto 0) <= S_LineState; -- orange/red
 
 end Behavioral;
