@@ -113,7 +113,7 @@ architecture Behavioral of ulx3s_usbtest is
   signal R_TXREADY: std_logic;
   signal R_RXVALID: std_logic;
   signal R_RXACTIVE: std_logic;
-  signal R_RXERROR: std_logic;
+  signal R_RXERROR: std_logic_vector(3 downto 0);
   signal R_DATAIN: std_logic_vector(7 downto 0);
   signal R_DATAOUT: std_logic_vector(7 downto 0);
 
@@ -280,7 +280,9 @@ begin
       end if;
       R_RXVALID <= S_RXVALID;
       R_RXACTIVE <= S_RXACTIVE;
-      R_RXERROR <= S_RXERROR;
+      if S_RXERROR = '1' then
+        R_RXERROR <= R_RXERROR + 1;
+      end if;
     end if;  
   end process;
   S_hid_report(41 downto 40) <= R_OPMODE;
@@ -291,7 +293,7 @@ begin
   S_hid_report(16) <= R_RXVALID;
   S_hid_report(15 downto 8) <= R_DATAOUT;
   S_hid_report(4) <= R_RXACTIVE;
-  S_hid_report(0) <= R_RXERROR;
+  S_hid_report(3 downto 0) <= R_RXERROR;
   oled_inst: entity work.oled
   generic map
   (
