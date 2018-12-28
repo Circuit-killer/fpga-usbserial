@@ -196,6 +196,7 @@ begin
   (
     led => S_led,
     dsctyp => S_dsctyp,
+    CLK => clk_usb,
     PHY_DATABUS16_8 => S_DATABUS16_8,
     PHY_RESET => S_RESET,
     PHY_XCVRSELECT => S_XCVRSELECT,

@@ -134,7 +134,7 @@ package usb_pkg is
             RXBUFSIZE_BITS: integer range 7 to 12 := 11;    -- Size of receive buffer
             TXBUFSIZE_BITS: integer range 7 to 12 := 10 );  -- Size of transmit buffer
         port (
-            CLK :           in  std_logic;          -- 60 MHz UTMI clock
+            CLK :           in  std_logic;          -- application clock, currently same as PHY_CLK
             RESET :         in  std_logic;          -- Synchronous reset
             USBRST :        out std_logic;          -- Reset signal detected on bus
             HIGHSPEED :     out std_logic;          -- Device operating in high speed mode
@@ -150,6 +150,7 @@ package usb_pkg is
             TXROOM :        out std_logic_vector(TXBUFSIZE_BITS-1 downto 0);
             TXCORK :        in  std_logic;          -- Suppress data transmission
             dsctyp :        out std_logic_vector(2 downto 0); -- debugging
+            PHY_CLK :       in  std_logic;          -- 48 or 60 MHz UTMI clock
             PHY_DATAIN :    in  std_logic_vector(7 downto 0);
             PHY_DATAOUT :   out std_logic_vector(7 downto 0);
             PHY_TXVALID :   out std_logic;

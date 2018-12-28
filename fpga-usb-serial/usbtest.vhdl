@@ -53,13 +53,14 @@ entity usbtest is
     port(
         LED :             out std_logic;
         dsctyp :          out std_logic_vector(2 downto 0);
+	CLK :             in  std_logic; -- application side clock, currently same as PHY_CLKOUT
 	PHY_DATABUS16_8 : out std_logic;
 	PHY_RESET :       out std_logic;
 	PHY_XCVRSELECT :  out std_logic;
 	PHY_TERMSELECT :  out std_logic;
 	PHY_OPMODE :      out std_logic_vector(1 downto 0);
 	PHY_LINESTATE :   in  std_logic_vector(1 downto 0);
-	PHY_CLKOUT :      in  std_logic;
+	PHY_CLKOUT:       in  std_logic; -- clock from USB PHY 48 or 60 MHz
 	PHY_TXVALID :     out std_logic;
 	PHY_TXREADY :     in  std_logic;
 	PHY_RXVALID :     in  std_logic;
@@ -76,9 +77,6 @@ architecture arch of usbtest is
     constant TXBUFSIZE_BITS : integer := 10;
     constant BLAST_DUTY_OFF : integer := 7;
     constant BLAST_DUTY_ON :  integer := 5;
-
-    -- Clock signal
-    signal CLK : std_logic;
 
     -- USB interface signals
     signal usb_devreset :   std_logic;
@@ -152,6 +150,7 @@ begin
             TXROOM          => usb_txroom,
             TXCORK          => s_txcork,
             dsctyp          => dsctyp, -- debugging
+            PHY_CLK         => PHY_CLKOUT,
             PHY_DATAIN      => PHY_DATAIN,
             PHY_DATAOUT     => PHY_DATAOUT,
             PHY_TXVALID     => PHY_TXVALID,
@@ -164,9 +163,6 @@ begin
             PHY_XCVRSELECT  => PHY_XCVRSELECT,
             PHY_TERMSELECT  => PHY_TERMSELECT,
             PHY_RESET       => PHY_RESET );
-
-    -- 60 MHz clock signal
-    CLK <= PHY_CLKOUT;
 
     -- Configure USB PHY
     PHY_DATABUS16_8 <= '0';		-- 8 bit mode

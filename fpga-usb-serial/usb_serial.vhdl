@@ -100,8 +100,7 @@ entity usb_serial is
         TXBUFSIZE_BITS: integer range 7 to 12 := 10 );
 
     port (
-
-        -- 60 MHz UTMI clock.
+        -- application-side clock (currently must be same as CLK_UTMI)
         CLK :           in  std_logic;
 
         -- Synchronous reset; clear buffers and re-attach to the bus.
@@ -154,6 +153,8 @@ entity usb_serial is
 	-- debug output to show descriptor type
 	dsctyp : out std_logic_vector(2 downto 0);
 
+        -- 48 or 60 MHz UTMI clock from USB PHY.
+        PHY_CLK :       in  std_logic;
         PHY_DATAIN :    in  std_logic_vector(7 downto 0);
 	PHY_DATAOUT :   out std_logic_vector(7 downto 0);
 	PHY_TXVALID :   out std_logic;
@@ -165,8 +166,8 @@ entity usb_serial is
 	PHY_OPMODE :    out std_logic_vector(1 downto 0);
         PHY_XCVRSELECT: out std_logic;
         PHY_TERMSELECT: out std_logic;
-	PHY_RESET :     out std_logic );
-	
+	PHY_RESET :     out std_logic
+    );
 end entity usb_serial;
 
 architecture usb_serial_arch of usb_serial is
@@ -590,7 +591,7 @@ begin
         generic map (
             HSSUPPORT       => HSSUPPORT )
         port map (
-            CLK             => CLK,
+            CLK             => PHY_CLK,
             RESET           => s_reset,
             I_USBRST        => usbi_usbrst,
             I_HIGHSPEED     => usbi_highspeed,
@@ -849,7 +850,7 @@ begin
         variable v_rxbuf_tmp_head : unsigned(RXBUFSIZE_BITS-1 downto 0);
         variable v_rxbuf_pktroom :  std_logic;
     begin
-        wait until rising_edge(CLK);
+        wait until rising_edge(PHY_CLK);
 
         -- Determine the maximum packet size we can transmit.
         if HSSUPPORT and usbi_highspeed = '1' then
@@ -1092,9 +1093,9 @@ begin
     -- but it is doubtful whether it will work on other FPGA families.
 
     -- Write to RX buffer.
-    process (CLK) is
+    process (PHY_CLK) is
     begin
-        if rising_edge(CLK) then
+        if rising_edge(PHY_CLK) then
             if s_state = ST_OUTRECV and usbt_rxrdy = '1' then
                 rxbuf(to_integer(resize(s_bufptr, RXBUFSIZE_BITS))) <= usbt_rxdat;
             end if;
@@ -1122,7 +1123,7 @@ begin
     end process;
 
     -- Read from TX buffer.
-    process (CLK) is
+    process (PHY_CLK) is
     begin
         if rising_edge(CLK) then
             if (usbt_txrdy = '1') or (s_state = ST_INSTART) then
