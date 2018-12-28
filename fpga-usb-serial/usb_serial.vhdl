@@ -737,15 +737,34 @@ begin
 
     -- Connection between PHY-side and application-side signals.
     -- This could be a good place to insert clock domain crossing.
-    q_rxbuf_head <= s_rxbuf_head;
-    s_rxbuf_tail <= q_rxbuf_tail;
-    s_txbuf_head <= q_txbuf_head;
-    q_txbuf_tail <= s_txbuf_tail;
-    s_txcork    <= TXCORK;
-    s_reset     <= RESET;
-    q_online    <= usbc_confd;
-    q_usbrst    <= usbi_usbrst;
-    q_highspeed <= usbi_highspeed;
+    process is
+    begin
+        wait until rising_edge(CLK);
+        q_rxbuf_head <= s_rxbuf_head;
+        q_txbuf_tail <= s_txbuf_tail;
+        q_online     <= usbc_confd;
+        q_usbrst     <= usbi_usbrst;
+        q_highspeed  <= usbi_highspeed;
+    end process;
+
+    process is
+    begin
+        wait until rising_edge(PHY_CLK);
+        s_rxbuf_tail <= q_rxbuf_tail;
+        s_txbuf_head <= q_txbuf_head;
+        s_txcork     <= TXCORK;
+        s_reset      <= RESET;
+    end process;
+
+--    q_rxbuf_head <= s_rxbuf_head;
+--    s_rxbuf_tail <= q_rxbuf_tail;
+--    s_txbuf_head <= q_txbuf_head;
+--    q_txbuf_tail <= s_txbuf_tail;
+--    s_txcork    <= TXCORK;
+--    s_reset     <= RESET;
+--    q_online    <= usbc_confd;
+--    q_usbrst    <= usbi_usbrst;
+--    q_highspeed <= usbi_highspeed;
 
     -- Lookup address/length of the selected descriptor (combinatorial).
     process (usbc_dsctyp, usbc_dscinx, usbi_highspeed)
