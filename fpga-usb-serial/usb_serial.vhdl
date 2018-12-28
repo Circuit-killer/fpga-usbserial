@@ -606,7 +606,7 @@ begin
     -- Packet level logic
     usb_packet_inst : usb_packet
         port map (
-            CLK             => CLK,
+            CLK             => PHY_CLK,
             RESET           => usbi_usbrst,
             P_CHIRPK        => usbp_chirpk,
             P_RXACT         => usbp_rxact,
@@ -629,7 +629,7 @@ begin
         generic map (
             HSSUPPORT       => HSSUPPORT )
         port map (
-            CLK             => CLK,
+            CLK             => PHY_CLK,
             RESET           => usbi_usbrst,
             T_IN            => usbt_in,
             T_OUT           => usbt_out,
@@ -662,7 +662,7 @@ begin
         generic map (
 	    NENDPT          => 2 )
         port map (
-            CLK             => CLK,
+            CLK             => PHY_CLK,
             RESET           => usbi_usbrst,
             C_ADDR          => usbc_addr,
             C_CONFD         => usbc_confd,
@@ -737,23 +737,25 @@ begin
 
     -- Connection between PHY-side and application-side signals.
     -- This could be a good place to insert clock domain crossing.
-    process is
+    process (CLK) is
     begin
-        wait until rising_edge(CLK);
+      if rising_edge(CLK) then
         q_rxbuf_head <= s_rxbuf_head;
         q_txbuf_tail <= s_txbuf_tail;
         q_online     <= usbc_confd;
         q_usbrst     <= usbi_usbrst;
         q_highspeed  <= usbi_highspeed;
+      end if;
     end process;
 
-    process is
+    process (PHY_CLK) is
     begin
-        wait until rising_edge(PHY_CLK);
+      if rising_edge(PHY_CLK) then
         s_rxbuf_tail <= q_rxbuf_tail;
         s_txbuf_head <= q_txbuf_head;
         s_txcork     <= TXCORK;
         s_reset      <= RESET;
+      end if;
     end process;
 
 --    q_rxbuf_head <= s_rxbuf_head;
@@ -1144,7 +1146,7 @@ begin
     -- Read from TX buffer.
     process (PHY_CLK) is
     begin
-        if rising_edge(CLK) then
+        if rising_edge(PHY_CLK) then
             if (usbt_txrdy = '1') or (s_state = ST_INSTART) then
                 txbuf_rdat <= txbuf(to_integer(resize(s_bufptr, TXBUFSIZE_BITS)));
             end if;
@@ -1152,9 +1154,9 @@ begin
     end process;
 
     -- Read from descriptor memory.
-    process (CLK) is
+    process (PHY_CLK) is
     begin
-        if rising_edge(CLK) then
+        if rising_edge(PHY_CLK) then
             if usbc_dscrd = '1' then
                 if HSSUPPORT and unsigned(usbc_dscoff) = 1 and usbc_dsctyp = "111" then
                     -- Disguise the configuration descriptor as an
