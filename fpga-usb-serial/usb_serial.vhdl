@@ -311,6 +311,7 @@ architecture usb_serial_arch of usb_serial is
         X"24",                  -- bDescriptorType = CS_INTERFACE
         X"02",                  -- bDescriptorSubtype = Abstract Control Mgmnt
         X"00",                  -- bmCapabilities = none
+        -- X"04",                  -- bmCapabilities = sends break
         -- 5 bytes functional descriptor (union)
         X"05",                  -- bLength = 5 bytes
         X"24",                  -- bDescriptorType = CS_INTERFACE
@@ -389,6 +390,7 @@ architecture usb_serial_arch of usb_serial is
         X"24",                  -- bDescriptorType = CS_INTERFACE
         X"02",                  -- bDescriptorSubtype = Abstract Control Mgmnt
         X"00",                  -- bmCapabilities = none
+        --X"04",                  -- bmCapabilities = sends break
         -- 5 bytes functional descriptor (union)
         X"05",                  -- bLength = 5 bytes
         X"24",                  -- bDescriptorType = CS_INTERFACE

@@ -64,6 +64,8 @@ entity usb_rx_phy is
     -- Transciever Interface
     fs_ce_o         : out std_logic;
     rxd, rxdp, rxdn : in  std_logic;
+    -- RX debug interface
+    sync_err_o, bit_stuff_err_o, byte_err_o: out std_logic;
     -- UTMI Interface
     DataIn_o        : out std_logic_vector(7 downto 0);
     RxValid_o       : out std_logic;
@@ -123,6 +125,12 @@ begin
   RxError_o  <= sync_err or bit_stuff_err or byte_err;
   DataIn_o   <= hold_reg;
   LineState  <= rxdn_s1 & rxdp_s1;
+  
+  -- debug outputs
+  sync_err_o <= sync_err;
+  bit_stuff_err_o <= bit_stuff_err;
+  byte_err_o <= byte_err;
+  -- end debug outputs
  
   p_rx_en: process (clk)
   begin

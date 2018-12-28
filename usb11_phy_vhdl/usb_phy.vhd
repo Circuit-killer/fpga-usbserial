@@ -55,6 +55,8 @@ entity usb_phy is
     -- Transciever Interface
     rxd, rxdp, rxdn  : in  std_logic;
     txdp, txdn, txoe : out std_logic;
+    -- RX debug interface
+    sync_err_o, bit_stuff_err_o, byte_err_o: out std_logic;
     -- UTMI Interface
     DataOut_i        : in  std_logic_vector(7 downto 0);
     TxValid_i        : in  std_logic;
@@ -106,7 +108,7 @@ architecture RTL of usb_phy is
   signal rst_cnt        : std_logic_vector(4 downto 0);
   signal txoe_out       : std_logic;
   signal usb_rst_out    : std_logic := '0';
- 
+  
 begin
  
 --======================================================================================--
@@ -150,6 +152,10 @@ begin
     rxd        => rxd,
     rxdp       => rxdp,
     rxdn       => rxdn,
+    -- RX debug interface
+    sync_err_o => sync_err_o,
+    bit_stuff_err_o => bit_stuff_err_o,
+    byte_err_o => byte_err_o,
     -- UTMI Interface
     DataIn_o   => DataIn_o,
     RxValid_o  => RxValid_o,

@@ -5,6 +5,6 @@ BOARD_VERSION = v20
 FPGA_SIZE = 85
 
 # bitstream file prefix
-BITSTREAM_PREFIX = f32c_$(BOARD)_$(BOARD_VERSION)_$(FPGA_SIZE)k_usbserial
+BITSTREAM_PREFIX = usbserial_$(BOARD)_$(BOARD_VERSION)_$(FPGA_SIZE)k
 
 include ../../include/ulx3s.mk

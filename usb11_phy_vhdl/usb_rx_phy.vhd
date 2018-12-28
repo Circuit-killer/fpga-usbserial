@@ -63,6 +63,8 @@ entity usb_rx_phy is
     -- Transciever Interface
     fs_ce_o         : out std_logic;
     rxd, rxdp, rxdn : in  std_logic;
+    -- RX debug interface
+    sync_err_o, bit_stuff_err_o, byte_err_o: out std_logic;
     -- UTMI Interface
     DataIn_o        : out std_logic_vector(7 downto 0);
     RxValid_o       : out std_logic;
@@ -99,9 +101,8 @@ architecture RTL of usb_rx_phy is
   signal fs_state, fs_next_state            : std_logic_vector(2 downto 0);
   signal rx_valid_r                         : std_logic;
   signal sync_err_d, sync_err               : std_logic;
-  signal bit_stuff_err                      : std_logic;
-  signal se0_r, byte_err                    : std_logic;
-  signal se0_s                              : std_logic;
+  signal bit_stuff_err, byte_err            : std_logic;
+  signal se0_r, se0_s                       : std_logic;
   signal fs_ce_r1, fs_ce_r2                 : std_logic;
  
   constant FS_IDLE  : std_logic_vector(2 downto 0) := "000";
@@ -126,6 +127,12 @@ begin
   DataIn_o   <= hold_reg;
   LineState  <= rxdn_s1 & rxdp_s1;
  
+   -- debug outputs
+  sync_err_o <= sync_err;
+  bit_stuff_err_o <= bit_stuff_err;
+  byte_err_o <= byte_err;
+  -- end debug outputs
+
   p_rx_en: process (clk)
   begin
     if rising_edge(clk) then

@@ -79,8 +79,8 @@ entity ulx3s_usbtest is
 end;
 
 architecture Behavioral of ulx3s_usbtest is
-  signal clk_100MHz, clk_60MHz, clk_7M5Hz, clk_12MHz: std_logic;
-  signal clk_usb_60MHz: std_logic;
+  signal clk_200MHz, clk_100MHz, clk_60MHz, clk_48MHz, clk_12MHz, clk_7M5Hz: std_logic;
+  signal clk_usb: std_logic; -- 48 or 60 MHz
   signal S_led: std_logic;
   signal S_usb_rst: std_logic;
   signal R_rst_btn: std_logic;
@@ -105,6 +105,8 @@ architecture Behavioral of ulx3s_usbtest is
   signal S_DATAOUT: std_logic_vector(7 downto 0);
   signal S_ulpi_data_out_i, S_ulpi_data_in_o: std_logic_vector(7 downto 0);
   signal S_ulpi_dir_i: std_logic;
+  -- UTMI debug
+  signal S_sync_err, S_bit_stuff_err, S_byte_err: std_logic;
   -- registers for OLED
   signal R_txdp, R_txdn: std_logic;
   signal R_OPMODE: std_logic_vector(1 downto 0);
@@ -116,6 +118,8 @@ architecture Behavioral of ulx3s_usbtest is
   signal R_RXERROR: std_logic_vector(3 downto 0);
   signal R_DATAIN: std_logic_vector(7 downto 0);
   signal R_DATAOUT: std_logic_vector(7 downto 0);
+  -- UTMI debug error counters
+  signal R_sync_err, R_bit_stuff_err, R_byte_err: std_logic_vector(3 downto 0);
 
   component ulpi_wrapper
     --generic (
@@ -149,7 +153,8 @@ architecture Behavioral of ulx3s_usbtest is
     );
   end component;
 begin
-  clk_pll: entity work.clk_25M_100M_7M5_12M_60M
+  g_single_pll: if false generate
+  clk_single_pll: entity work.clk_25M_100M_7M5_12M_60M
   port map
   (
       CLKI        =>  clk_25MHz,
@@ -158,6 +163,25 @@ begin
       CLKOS2      =>  clk_12MHz,
       CLKOS3      =>  clk_60MHz
   );
+  end generate;
+
+  g_double_pll: if true generate
+  clk_double_pll1: entity work.clk_25M_200M
+  port map
+  (
+      CLKI        =>  clk_25MHz,
+      CLKOP       =>  clk_200MHz
+  );
+  clk_double_pll2: entity work.clk_200M_60M_48M_12M_7M5
+  port map
+  (
+      CLKI        =>  clk_200MHz,
+      CLKOP       =>  clk_60MHz,
+      CLKOS       =>  clk_48MHz,
+      CLKOS2      =>  clk_12MHz,
+      CLKOS3      =>  clk_7M5Hz
+  );
+  end generate;
 
   -- TX/RX passthru
   --ftdi_rxd <= wifi_txd;
@@ -177,7 +201,7 @@ begin
     PHY_XCVRSELECT => S_XCVRSELECT,
     PHY_TERMSELECT => S_TERMSELECT,
     PHY_OPMODE => S_OPMODE,
-    PHY_CLKOUT => clk_usb_60MHz,
+    PHY_CLKOUT => clk_usb,
     PHY_TXVALID => S_TXVALID,
     PHY_DATAOUT => S_DATAOUT,
     PHY_TXREADY => S_TXREADY,
@@ -189,7 +213,7 @@ begin
   );
 
   G_internal_usb_phy: if not C_external_ulpi generate
-  clk_usb_60MHz <= clk_60MHz;
+  clk_usb <= clk_48MHz;
   -- USB1.1 PHY soft-core
   usb11_phy: entity work.usb_phy
   generic map
@@ -198,7 +222,7 @@ begin
   )
   port map
   (
-    clk => clk_usb_60MHz,
+    clk => clk_usb,
     rst => '1', -- 1-don't reset, 0-hold reset
     phy_tx_mode => '1', -- 1-differential, 0-single-ended
     usb_rst => S_usb_rst, -- USB host requests reset, sending signal to usb-serial core
@@ -211,6 +235,10 @@ begin
     RxActive_o => S_RXACTIVE,
     RxError_o => S_RXERROR,
     LineState_o => S_LINESTATE, -- 2-bit
+    -- debug interface
+    sync_err_o => S_sync_err,
+    bit_stuff_err_o => S_bit_stuff_err,
+    byte_err_o => S_byte_err,
     -- transciever interface to hardware
     rxd => S_rxd, -- differential input from D+
     rxdp => S_rxdp, -- single-ended input from D+
@@ -248,7 +276,7 @@ begin
       utmi_dppulldown_i => '0', -- peripheral FS (full speed) tusb3340 p.20
       utmi_dmpulldown_i => '0',  -- peripheral FS (full speed) tusb3340 p.20
       -- ULPI Interface (PHY) to chip e.g. TUSB3340
-      ulpi_clk60_i => clk_usb_60MHz,  -- input clock 60 MHz
+      ulpi_clk60_i => clk_usb,  -- input clock 60 MHz
       ulpi_rst_i => gn(0),
       ulpi_data_out_i => S_ulpi_data_out_i,
       ulpi_data_in_o => S_ulpi_data_in_o,
@@ -259,7 +287,7 @@ begin
   S_ulpi_dir_i <= gp(9);
   S_ulpi_data_out_i <= gp(8 downto 1);
   gp(8 downto 1) <= S_ulpi_data_in_o when S_ulpi_dir_i = '0' else (others => 'Z');
-  clk_usb_60MHz <= gp(0);
+  clk_usb <= gp(0);
   end generate G_external_usb_phy;
 
   -- see the HID report on the OLED
@@ -268,6 +296,15 @@ begin
   begin
     if rising_edge(clk_60MHz) then
       R_rst_btn <= btn(0);
+      if S_sync_err = '1' then
+        R_sync_err <= R_sync_err + 1;
+      end if;
+      if S_bit_stuff_err = '1' then
+        R_bit_stuff_err <= R_bit_stuff_err + 1;
+      end if;
+      if S_byte_err = '1' then
+        R_byte_err <= R_byte_err + 1;
+      end if;
       R_OPMODE <= S_OPMODE;
       R_LINESTATE <= S_LINESTATE; -- 2-bit
       R_TXVALID <= S_TXVALID;
@@ -285,6 +322,9 @@ begin
       end if;
     end if;  
   end process;
+  S_hid_report(55 downto 52) <= R_sync_err;
+  S_hid_report(51 downto 48) <= R_bit_stuff_err;
+  S_hid_report(47 downto 44) <= R_byte_err;
   S_hid_report(41 downto 40) <= R_OPMODE;
   S_hid_report(37 downto 36) <= R_LINESTATE;
   S_hid_report(32) <= R_TXVALID;
@@ -312,7 +352,7 @@ begin
   );
   end generate;
 
-  led(7 downto 4) <= x"5";
+  led(7 downto 4) <= R_RXERROR;
   led(3) <= S_usb_rst; -- blue, blinks on USB reset
   led(2) <= S_led; -- green, should blink when enumerated
   led(1 downto 0) <= S_LineState; -- orange/red

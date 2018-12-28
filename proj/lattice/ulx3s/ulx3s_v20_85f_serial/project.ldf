@@ -3,7 +3,7 @@
     <Options/>
     <Implementation title="project" dir="project" description="project" synthesis="synplify" default_strategy="Strategy1">
         <Options def_top="ulx3s_usbtest" top="ulx3s_usbtest"/>
-        <Source name="top/ulx3s_usbserial.vhd" type="VHDL" type_short="VHDL">
+        <Source name="../../../../lattice/ulx3s/top/ulx3s_usbserial.vhd" type="VHDL" type_short="VHDL">
             <Options top_module="ulx3s_usbtest"/>
         </Source>
         <Source name="../../../../lattice/ulx3s/clocks/clk_25M_100M_7M5_12M_60M.vhd" type="VHDL" type_short="VHDL">
