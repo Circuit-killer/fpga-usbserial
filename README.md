@@ -25,5 +25,7 @@ USB devices with properly wired connectors are used.
 
 Sometimes it doesn't enumerate (doesn't work at all) on some USB ports.
 Soft-core UTMI works much more reliable when everything is clocked
-at 48 MHz instead of 60 MHz. Very high RX error count aoccurs with
+at 48 MHz instead of 60 MHz.
+
+With 60 MHz it looses serial chars. RX error count is higher with
 60 MHz UTMI RX core.
