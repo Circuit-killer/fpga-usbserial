@@ -1,9 +1,13 @@
 # USB-serial core
 
 Enumerates as USB1.1 serial port seen as /dev/ttyACM0 on linux.
+
     cu -l ttyACM0
+
 or
+
     screen /dev/ttyACM0
+
 Type anything and press RETURN or ENTER.
 The core should respond with everything you typed
 but in the reverse order.
