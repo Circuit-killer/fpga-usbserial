@@ -11,9 +11,9 @@ library ecp5u;
 use ecp5u.components.all;
 
 -- USB packet generator functions
-use work.usb_req_gen_func_pack.all;
+-- use work.usb_req_gen_func_pack.all;
 -- package for decoded structure
-use work.report_decoded_pack.all;
+-- use work.report_decoded_pack.all;
 
 entity ulx3s_usbtest is
   generic

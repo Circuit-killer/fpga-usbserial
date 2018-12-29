@@ -65,7 +65,6 @@
 
 library ieee;
 use ieee.std_logic_1164.all, ieee.numeric_std.all;
-use work.usb_pkg.all;
 
 entity usb_serial is
 
@@ -593,7 +592,7 @@ begin
         report "High-speed device needs at least 1024 bytes RX buffer";
 
     -- Bus reset logic
-    usb_init_inst : usb_init
+    usb_init_inst : entity work.usb_init
         generic map (
             HSSUPPORT       => HSSUPPORT )
         port map (
@@ -610,7 +609,7 @@ begin
             PHY_TERMSELECT  => PHY_TERMSELECT );
 
     -- Packet level logic
-    usb_packet_inst : usb_packet
+    usb_packet_inst : entity work.usb_packet
         port map (
             CLK             => PHY_CLK,
             RESET           => usbi_usbrst,
@@ -631,7 +630,7 @@ begin
             PHY_RXERROR     => PHY_RXERROR );
 
     -- Transaction level logic
-    usb_transact_inst : usb_transact
+    usb_transact_inst : entity work.usb_transact
         generic map (
             HSSUPPORT       => HSSUPPORT )
         port map (
@@ -664,7 +663,7 @@ begin
             P_TXDAT         => usbp_txdat );
 
     -- Default control endpoint
-    usb_control_inst : usb_control
+    usb_control_inst : entity work.usb_control
         generic map (
 	    NENDPT          => 2 )
         port map (

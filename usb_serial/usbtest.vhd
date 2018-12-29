@@ -46,7 +46,6 @@ library ieee;
 
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
-use work.usb_pkg.all;
 
 entity usbtest is
 
@@ -121,7 +120,7 @@ architecture arch of usbtest is
 begin
 
     -- Direct interface to serial data transfer component
-    usb_serial_inst : usb_serial
+    usb_serial_inst : entity work.usb_serial
         generic map (
             VENDORID        => X"fb9a",
             PRODUCTID       => X"fb9a",
