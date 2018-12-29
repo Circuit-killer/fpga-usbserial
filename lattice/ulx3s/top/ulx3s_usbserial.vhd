@@ -252,6 +252,7 @@ begin
   usb_fpga_pu_dp <= '1'; -- D+ pullup for USB1.1 device mode
   usb_fpga_pu_dn <= 'Z'; -- D- no pullup for USB1.1 device mode
   S_rxd <= usb_fpga_dp; -- differential input reads D+
+  -- S_rxd <= usb_fpga_bd_dp; -- single-ended input reads D+ may work as well
   S_rxdp <= usb_fpga_bd_dp; -- single-ended input reads D+
   S_rxdn <= usb_fpga_bd_dn; -- single-ended input reads D-
   usb_fpga_bd_dp <= S_txdp when S_txoe = '0' else 'Z';
