@@ -45,7 +45,7 @@ and replaced by reading D+ only, so the minimal hardware is:
     2 single-ended bidirectional pins
 
 Differential mode should provide wider hardware coverage
-as it's electrically more compatible to USB standard.
+as it's electrically more compatible.
 USB standard requires tolerance to +5V on any pin,
 therefore 27-ohm resistors and 3.6V Zener diodes protect FPGA from +5V.
 Core can work without 3.6V Zener diodes if normal
