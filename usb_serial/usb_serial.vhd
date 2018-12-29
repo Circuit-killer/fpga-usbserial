@@ -156,7 +156,7 @@ entity usb_serial is
 	dsctyp : out std_logic_vector(2 downto 0);
 
         -- clock from UTMI PHY:
-        -- 48 MHz with "usb_rx_phy.vhd" (recommended)
+        -- 48 MHz with "usb_rx_phy_48MHz.vhd" (recommended)
         -- 60 MHz with "usb_rx_phy_60MHz.vhd"
         PHY_CLK :       in  std_logic;
         PHY_DATAIN :    in  std_logic_vector(7 downto 0);

@@ -36,7 +36,7 @@
         <Source name="../../../../usb11_phy_vhdl/usb_phy.vhd" type="VHDL" type_short="VHDL">
             <Options/>
         </Source>
-        <Source name="../../../../usb11_phy_vhdl/usb_rx_phy.vhd" type="VHDL" type_short="VHDL">
+        <Source name="../../../../usb11_phy_vhdl/usb_rx_phy_48MHz.vhd" type="VHDL" type_short="VHDL">
             <Options/>
         </Source>
         <Source name="../../../../usb11_phy_vhdl/usb_tx_phy.vhd" type="VHDL" type_short="VHDL">
