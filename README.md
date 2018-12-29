@@ -40,7 +40,7 @@ Total 6 FPGA pins are used with "27-ohm" interface.
 To save 2 pins, instead of pullup/pulldown control pins,
 a fixed pullup resistor of 1.5k between D+ and 3.3V can be used.
 To save 2 additional pins, differential input may be omitted
-and replaced by reading D+ only, so the minimal hardware is:
+and replaced by single-ended D+ input only, so the minimal hardware is:
 
     2 single-ended bidirectional pins
 
