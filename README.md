@@ -1,10 +1,25 @@
-# usb-serial core
+# USB-serial core
 
 Enumerates as USB1.1 serial port seen as /dev/ttyACM0 on linux.
 Buffers typed characters. After pressin RETURN prints buffered
 characters in reverse order.
 
-# hardware
+# Application side
+
+Application side is the interface as 
+seen from soft core CPU or built-in state machine that reverses typed chars.
+
+This core application side "speaks" complete serial bytes with READY/VALID signaling
+at maximum speed USB port can provide, not just two RX/TX RS232 lines
+at 115200 spped, however such interface can be made too.
+
+It has clock domain crossing so application side serial buffer should
+accept any clock synchronous with the application (or soft-core CPU).
+Tested with 7.5, 12, 48, 60, 100 and 200 MHz 
+
+PHY side (hardware side) clock should run at 48 MHz or 60 MHz.
+
+# Hardware
 
 Total 6 FPGA pins are used with "27-ohm" interface.
 (see ["usb" sheet of ULX3S schematics](https://github.com/emard/ulx3s/tree/master/doc/schematics.pdf)):
@@ -21,11 +36,13 @@ therefore 27-ohm resistors and 3.6V Zener diodes protect FPGA from +5V.
 Core can work without 3.6V Zener diodes if normal
 USB devices with properly wired connectors are used.
 
-# issues
+# Issues
 
-Sometimes it doesn't enumerate (doesn't work at all) on some USB ports.
-Soft-core UTMI works much more reliable when everything is clocked
-at 48 MHz instead of 60 MHz.
+When it doesn't enumerate, try to re-plug or choose another USB port.
+This situation should occur quite rarely I hope.
 
-With 60 MHz it looses serial chars. RX error count is higher with
-60 MHz UTMI RX core.
+Soft-core UTMI works slightly more reliable (less line errors) 
+when clocked at 48 MHz rather than 60 MHz (more line errors).
+But for both clocks, usb-serial port should not loose any bytes.
+
+Frequency of line errors also depends on cable quality and USB voltage.
