@@ -195,14 +195,14 @@ begin
   port map
   (
     led => S_led,
-    dsctyp => S_dsctyp,
-    CLK => clk_60MHz,
+    dsctyp => S_dsctyp, -- debug shows descriptor type
+    CLK => clk_60MHz, -- application clock, any freq 7.5-200 MHz
     PHY_DATABUS16_8 => S_DATABUS16_8,
     PHY_RESET => S_RESET,
     PHY_XCVRSELECT => S_XCVRSELECT,
     PHY_TERMSELECT => S_TERMSELECT,
     PHY_OPMODE => S_OPMODE,
-    PHY_CLKOUT => clk_usb,
+    PHY_CLKOUT => clk_usb, -- 48 or 60 MHz
     PHY_TXVALID => S_TXVALID,
     PHY_DATAOUT => S_DATAOUT,
     PHY_TXREADY => S_TXREADY,
@@ -214,7 +214,7 @@ begin
   );
 
   G_internal_usb_phy: if not C_external_ulpi generate
-  clk_usb <= clk_48MHz;
+  clk_usb <= clk_48MHz; -- 48 MHz with "usb_rx_phy.vhd" or 60 MHz with "usb_rx_phy_60MHz.vhd"
   -- USB1.1 PHY soft-core
   usb11_phy: entity work.usb_phy
   generic map
@@ -223,7 +223,7 @@ begin
   )
   port map
   (
-    clk => clk_usb,
+    clk => clk_usb, -- 48 MHz or 60 MHz
     rst => '1', -- 1-don't reset, 0-hold reset
     phy_tx_mode => '1', -- 1-differential, 0-single-ended
     usb_rst => S_usb_rst, -- USB host requests reset, sending signal to usb-serial core
@@ -293,9 +293,9 @@ begin
 
   -- see the HID report on the OLED
   g_oled: if true generate
-  process(clk_60MHz)
+  process(clk_usb)
   begin
-    if rising_edge(clk_60MHz) then
+    if rising_edge(clk_usb) then
       R_rst_btn <= btn(0);
       if S_sync_err = '1' then
         R_sync_err <= R_sync_err + 1;

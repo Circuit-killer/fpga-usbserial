@@ -59,6 +59,9 @@
 --  these hardwired connections with carefully designed synchronization logic,
 --  a separation of clock domains could be realized.
 --
+--  EMARD 2018-12-28 update: implemented separate clock domains
+--  CLK for application side (tested at 7.5, 12, 48, 60, 100 and 200 MHz)
+--  CLK_PHY for UTMI PHY side (tested at 48 and 60 MHz)
 
 library ieee;
 use ieee.std_logic_1164.all, ieee.numeric_std.all;
@@ -100,7 +103,7 @@ entity usb_serial is
         TXBUFSIZE_BITS: integer range 7 to 12 := 10 );
 
     port (
-        -- application-side clock (currently must be same as CLK_UTMI)
+        -- application-side clock, tested at 7.5,12,48,60,100,200 MHz
         CLK :           in  std_logic;
 
         -- Synchronous reset; clear buffers and re-attach to the bus.
@@ -153,7 +156,9 @@ entity usb_serial is
 	-- debug output to show descriptor type
 	dsctyp : out std_logic_vector(2 downto 0);
 
-        -- 48 or 60 MHz UTMI clock from USB PHY.
+        -- clock from UTMI PHY:
+        -- 48 MHz with "usb_rx_phy.vhd" (recommended)
+        -- 60 MHz with "usb_rx_phy_60MHz.vhd"
         PHY_CLK :       in  std_logic;
         PHY_DATAIN :    in  std_logic_vector(7 downto 0);
 	PHY_DATAOUT :   out std_logic_vector(7 downto 0);
