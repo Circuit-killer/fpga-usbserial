@@ -574,6 +574,7 @@ architecture usb_serial_arch of usb_serial is
     signal q_usbrst :       std_logic;
     signal q_online :       std_logic;
     signal q_highspeed :    std_logic;
+    signal q_suspend :      std_logic;
 
     -- Receive buffer logic (application side).
     signal q_rxval :        std_logic := '0';
@@ -698,7 +699,7 @@ begin
     -- Assign usb_serial output signals.
     USBRST      <= q_usbrst;
     HIGHSPEED   <= q_highspeed;
-    SUSPEND     <= usbi_suspend;
+    SUSPEND     <= q_suspend;
     ONLINE      <= q_online;
     RXVAL       <= q_rxval;
     RXDAT       <= rxbuf_rdat;
@@ -745,6 +746,7 @@ begin
         q_online     <= usbc_confd;
         q_usbrst     <= usbi_usbrst;
         q_highspeed  <= usbi_highspeed;
+        q_suspend    <= usbi_suspend;
       end if;
     end process;
 
