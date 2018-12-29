@@ -1,8 +1,12 @@
 # USB-serial core
 
 Enumerates as USB1.1 serial port seen as /dev/ttyACM0 on linux.
-Buffers typed characters. After pressin RETURN prints buffered
-characters in reverse order.
+    cu -l ttyACM0
+or
+    screen /dev/ttyACM0
+Type anything and press RETURN or ENTER.
+The core should respond with everything you typed
+but in the reverse order.
 
 # Application side
 
