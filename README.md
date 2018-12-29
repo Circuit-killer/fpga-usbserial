@@ -1,6 +1,7 @@
 # USB-serial core
 
 Enumerates as USB1.1 serial port seen as /dev/ttyACM0 on linux.
+Connect to serial port with some teriminal emulator like
 
     cu -l ttyACM0
 
