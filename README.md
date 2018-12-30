@@ -16,11 +16,12 @@ but in the reverse order.
 # Application side
 
 Application side is the interface as 
-seen from soft core CPU or built-in state machine that reverses typed chars.
+seen from soft core CPU or test example state machine that reverses typed chars.
 
 This core application side "speaks" complete serial bytes with READY/VALID signaling
 at maximum speed USB port can provide, not just two RX/TX RS232 lines
-at 115200 spped, however such interface can be made too.
+at 115200 baud, however such interface should be made too as full usb-serial
+cable replacement.
 
 It has clock domain crossing so application side serial buffer should
 accept any clock synchronous with the application (or soft-core CPU).
