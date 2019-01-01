@@ -103,6 +103,7 @@ architecture Behavioral of ulx3s_usbtest is
   signal S_RXERROR: std_logic;
   signal S_DATAIN: std_logic_vector(7 downto 0);
   signal S_DATAOUT: std_logic_vector(7 downto 0);
+  signal S_BREAK: std_logic;
   signal S_ulpi_data_out_i, S_ulpi_data_in_o: std_logic_vector(7 downto 0);
   signal S_ulpi_dir_i: std_logic;
   -- UTMI debug
@@ -194,9 +195,10 @@ begin
   usb_serial_core: entity work.usbtest
   port map
   (
+    CLK => clk_60MHz, -- application clock, any freq 7.5-200 MHz
     led => S_led,
     dsctyp => S_dsctyp, -- debug shows descriptor type
-    CLK => clk_60MHz, -- application clock, any freq 7.5-200 MHz
+    BREAK => S_BREAK,
     PHY_DATABUS16_8 => S_DATABUS16_8,
     PHY_RESET => S_RESET,
     PHY_XCVRSELECT => S_XCVRSELECT,
@@ -251,8 +253,8 @@ begin
   -- transciever soft-core
   usb_fpga_pu_dp <= '1'; -- D+ pullup for USB1.1 device mode
   usb_fpga_pu_dn <= 'Z'; -- D- no pullup for USB1.1 device mode
-  S_rxd <= usb_fpga_dp; -- differential input reads D+
-  -- S_rxd <= usb_fpga_bd_dp; -- single-ended input reads D+ may work as well
+  --S_rxd <= usb_fpga_dp; -- differential input reads D+
+  S_rxd <= usb_fpga_bd_dp; -- single-ended input reads D+ may work as well
   S_rxdp <= usb_fpga_bd_dp; -- single-ended input reads D+
   S_rxdn <= usb_fpga_bd_dn; -- single-ended input reads D-
   usb_fpga_bd_dp <= S_txdp when S_txoe = '0' else 'Z';
@@ -355,7 +357,8 @@ begin
   end generate;
 
   led(7 downto 4) <= R_RXERROR;
-  led(3) <= S_usb_rst; -- blue, blinks on USB reset
+  -- led(3) <= S_usb_rst; -- blue, blinks on USB reset
+  led(3) <= S_BREAK; -- blue lights during serial break
   led(2) <= S_led; -- green, should blink when enumerated
   led(1 downto 0) <= S_LineState; -- orange/red
 

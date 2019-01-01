@@ -52,6 +52,7 @@ entity usbtest is
     port(
         LED :             out std_logic;
         dsctyp :          out std_logic_vector(2 downto 0);
+        BREAK :           out std_logic;
 	CLK :             in  std_logic; -- application side clock, currently same as PHY_CLKOUT
 	PHY_DATABUS16_8 : out std_logic;
 	PHY_RESET :       out std_logic;
@@ -148,6 +149,7 @@ begin
             TXRDY           => usb_txrdy,
             TXROOM          => usb_txroom,
             TXCORK          => s_txcork,
+            BREAK           => BREAK,
             dsctyp          => dsctyp, -- debugging
             PHY_CLK         => PHY_CLKOUT,
             PHY_DATAIN      => PHY_DATAIN,
