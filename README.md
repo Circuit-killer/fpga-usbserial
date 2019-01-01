@@ -19,9 +19,8 @@ Application side is the interface as
 seen from soft core CPU or test example state machine that reverses typed chars.
 
 This core application side "speaks" complete serial bytes with READY/VALID signaling
-at maximum speed USB port can provide, not just two RX/TX RS232 lines
-at 115200 baud, however such interface should be made too as full usb-serial
-cable replacement.
+reaching up to 11 Mbit/s. It is not classic RX/TX RS232 at 115.2 kbit/s, however
+such interface should be made too as full usb-serial cable replacement.
 
 It has clock domain crossing so application side serial buffer should
 accept any clock synchronous with the application (or soft-core CPU).
