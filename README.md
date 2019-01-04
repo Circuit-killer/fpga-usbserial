@@ -60,5 +60,5 @@ Soft-core UTMI works slightly more reliable (less line errors)
 when clocked at 48 MHz rather than 60 MHz (more line errors).
 Frequency of line errors also depends on cable quality and USB voltage.
 
-USB-serial link occasionaly loses 128-bytes in direction
-when PC sends data to USB.
+USB-serial link occasionaly loses data in chunks of 64 bytes 
+in direction when PC sends data to USB.
