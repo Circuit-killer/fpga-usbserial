@@ -58,6 +58,7 @@ This situation should occur quite rarely I hope.
 
 Soft-core UTMI works slightly more reliable (less line errors) 
 when clocked at 48 MHz rather than 60 MHz (more line errors).
-But for both clocks, usb-serial port should not loose any bytes.
-
 Frequency of line errors also depends on cable quality and USB voltage.
+
+USB-serial link occasionaly loses 128-bytes in direction
+when PC sends data to USB.
