@@ -79,7 +79,7 @@ entity ulx3s_usbtest is
 end;
 
 architecture Behavioral of ulx3s_usbtest is
-  signal clk_200MHz, clk_100MHz, clk_60MHz, clk_48MHz, clk_12MHz, clk_7M5Hz: std_logic;
+  signal clk_200MHz, clk_100MHz, clk_89MHz, clk_60MHz, clk_48MHz, clk_12MHz, clk_7M5Hz: std_logic;
   signal clk_usb: std_logic; -- 48 or 60 MHz
   signal S_led: std_logic;
   signal S_usb_rst: std_logic;
@@ -154,7 +154,7 @@ architecture Behavioral of ulx3s_usbtest is
     );
   end component;
 begin
-  g_single_pll: if false generate
+  g_single_pll: if true generate
   clk_single_pll: entity work.clk_25M_100M_7M5_12M_60M
   port map
   (
@@ -166,7 +166,19 @@ begin
   );
   end generate;
 
-  g_double_pll: if true generate
+  g_single_pll2: if true generate
+  clk_single_pll2: entity work.clk_25_125_25_48_89
+  port map
+  (
+      CLKI        =>  clk_25MHz,
+      CLKOP       =>  open, -- 125 MHz
+      CLKOS       =>  open, -- 25 MHz
+      CLKOS2      =>  clk_48MHz,
+      CLKOS3      =>  clk_89MHz -- 89.28 MHz
+  );
+  end generate;
+
+  g_double_pll: if false generate
   clk_double_pll1: entity work.clk_25M_200M
   port map
   (
@@ -195,7 +207,7 @@ begin
   usb_serial_core: entity work.usbtest
   port map
   (
-    CLK => clk_60MHz, -- application clock, any freq 7.5-200 MHz
+    CLK => clk_89MHz, -- application clock, any freq 7.5-200 MHz
     led => S_led,
     dsctyp => S_dsctyp, -- debug shows descriptor type
     BREAK => S_BREAK,
