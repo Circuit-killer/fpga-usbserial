@@ -29,7 +29,7 @@ def test(length):
   #serial_port.write(b"123457\r")
   serial_port.write(test_send)
   serial_port.flush()
-  reply = serial_port.read(len(test_recv)*2)
+  reply = serial_port.read(len(test_recv))
   if len(reply) == len(test_recv):
     # print("OK received length", len(reply))
     dummy = 0
@@ -38,5 +38,5 @@ def test(length):
     print(reply)
     print(test_recv)
 
-for i in range(200,220):
+for i in range(900,1020):
   test(i)
